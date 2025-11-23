@@ -3,41 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube 转换器 - 多功能转换工具</title>
+    <title>YouTube链接转换 - 多功能文件转换工具</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        :root {
+            --background: #ffffff;
+            --foreground: #1a1a1a;
+            --border: #e5e5e5;
+            --card: #fafafa;
+            --primary: #2563eb;
+            --primary-foreground: #ffffff;
+            --muted: #f5f5f5;
+            --muted-foreground: #666666;
+            --destructive: #ef4444;
+            --destructive-foreground: #ffffff;
+            --accent: #f0f4ff;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
             padding: 20px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        
+
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
+            max-width: 42rem;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
             width: 100%;
-            position: relative;
         }
-        
+
         .back-button {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 10px 20px;
-            background: #4285f4;
-            color: white;
+            background: var(--primary);
+            color: var(--primary-foreground);
             text-decoration: none;
             border-radius: 6px;
             border: none;
@@ -45,157 +59,173 @@
             font-size: 14px;
             font-family: inherit;
             transition: background 0.3s;
-            margin-bottom: 20px;
+            margin-bottom: 2rem;
         }
-        
+
         .back-button:hover {
-            background: #3367d6;
+            background: #1d4ed8;
         }
-        
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
         h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2em;
-            text-align: center;
+            font-size: 2.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
-        
+
         .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 0.95em;
+            font-size: 1rem;
+            color: var(--muted-foreground);
         }
-        
+
+        .converter-form {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 0.5rem;
             font-weight: 500;
         }
-        
-        input[type="text"],
-        input[type="url"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
+
+        .input-group {
+            display: flex;
+            gap: 0.75rem;
         }
-        
-        input[type="text"]:focus,
+
+        input[type="url"] {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
         input[type="url"]:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary);
         }
-        
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
+
+        .format-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
+
+        .format-option {
+            flex: 1;
+            text-align: center;
+        }
+
+        .format-option input {
+            display: none;
+        }
+
+        .format-option label {
+            display: block;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.3s;
         }
-        
-        .btn-mp3 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+
+        .format-option input:checked + label {
+            border-color: var(--primary);
+            background: var(--accent);
         }
-        
-        .btn-mp3:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-mp4 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-        
-        .btn-mp4:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        #status {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
+
+        button {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
             font-weight: 500;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result-section {
             display: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
         }
-        
-        #status.info {
-            background: #e3f2fd;
-            color: #1976d2;
-            border-left: 4px solid #1976d2;
-            display: block;
+
+        .success-icon {
+            width: 4rem;
+            height: 4rem;
+            color: #10b981;
+            margin-bottom: 1rem;
         }
-        
-        #status.success {
-            background: #e8f5e9;
-            color: #388e3c;
-            border-left: 4px solid #388e3c;
-            display: block;
-        }
-        
-        #status.error {
-            background: #ffebee;
-            color: #d32f2f;
-            border-left: 4px solid #d32f2f;
-            display: block;
-        }
-        
-        .info-box {
-            background: #f0f4ff;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #555;
-            line-height: 1.6;
-        }
-        
+
         .loading {
             display: none;
             text-align: center;
+            padding: 2rem;
         }
-        
+
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--primary);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+            margin: 0 auto 1rem;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -207,170 +237,162 @@
             </svg>
             返回主页
         </button>
-        
-        <h1>🎵 YouTube 转换器</h1>
-        <p class="subtitle">将 YouTube 视频转换为 MP3 或 MP4 格式</p>
-        
-        <div class="form-group">
-            <label for="youtubeUrl">YouTube 视频链接：</label>
-            <input 
-                type="url" 
-                id="youtubeUrl" 
-                placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
-                required
-            >
+
+        <header>
+            <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+            </svg>
+            <h1>YouTube链接转换</h1>
+            <p class="subtitle">将YouTube视频链接转换为MP4视频或MP3音频</p>
+        </header>
+
+        <div class="converter-form" id="converter-form">
+            <div class="form-group">
+                <label for="youtube-url">YouTube视频链接</label>
+                <div class="input-group">
+                    <input type="url" id="youtube-url" placeholder="https://www.youtube.com/watch?v=..." required>
+                </div>
+            </div>
+
+            <div class="format-selector">
+                <div class="format-option">
+                    <input type="radio" id="format-mp4" name="format" value="mp4" checked>
+                    <label for="format-mp4">
+                        <strong>MP4 视频</strong>
+                        <div style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">下载视频文件</div>
+                    </label>
+                </div>
+                <div class="format-option">
+                    <input type="radio" id="format-mp3" name="format" value="mp3">
+                    <label for="format-mp3">
+                        <strong>MP3 音频</strong>
+                        <div style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">仅提取音频</div>
+                    </label>
+                </div>
+            </div>
+
+            <button onclick="convertVideo()" id="convert-btn">开始转换</button>
         </div>
-        
-        <div class="button-group">
-            <button class="btn-mp3" onclick="downloadMP3()" id="mp3Btn">🎵 下载 MP3</button>
-            <button class="btn-mp4" onclick="downloadMP4()" id="mp4Btn">🎬 下载 MP4</button>
-        </div>
-        
-        <div id="loading" class="loading">
+
+        <div class="loading" id="loading-section">
             <div class="spinner"></div>
-            <p>正在转换，请稍候...</p>
+            <p>正在处理链接，请稍候...</p>
         </div>
-        
-        <div id="status"></div>
-        
-        <div class="info-box">
-            <strong>📝 提示：</strong><br>
-            • 支持 youtube.com, youtu.be 等所有 YouTube 链接<br>
-            • MP3 转换质量为 192kbps<br>
-            • 转换时间取决于视频长度<br>
-            • ⚠️ 仅用于下载您拥有权限的内容
+
+        <div class="error-message" id="error-message"></div>
+
+        <div class="result-section" id="result-section">
+            <svg class="success-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3>转换完成！</h3>
+            <p style="margin-bottom: 1.5rem; color: var(--muted-foreground);">您的文件已准备就绪</p>
+            <button onclick="resetForm()">转换另一个链接</button>
         </div>
     </div>
 
     <script>
-        const API_BASE = 'https://781db0af-089c-4d70-8a31-806cd5f562a9-00-3jbsebvx65mx3.riker.replit.dev';
-        
+        const API_URL = 'https://multi-tool-web-backend.onrender.com';
+
         function goBack() {
-            window.location.href = '../index.html';
+            window.location.href = '/';
         }
-        
-        function showStatus(message, type) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.className = type;
-        }
-        
-        function setLoading(isLoading) {
-            const loadingDiv = document.getElementById('loading');
-            const mp3Btn = document.getElementById('mp3Btn');
-            const mp4Btn = document.getElementById('mp4Btn');
+
+        function convertVideo() {
+            const urlInput = document.getElementById('youtube-url');
+            const format = document.querySelector('input[name="format"]:checked').value;
+            const convertBtn = document.getElementById('convert-btn');
+            const loadingSection = document.getElementById('loading-section');
+            const errorMessage = document.getElementById('error-message');
+            const converterForm = document.getElementById('converter-form');
+
+            const youtubeUrl = urlInput.value.trim();
             
-            if (isLoading) {
-                loadingDiv.style.display = 'block';
-                mp3Btn.disabled = true;
-                mp4Btn.disabled = true;
-            } else {
-                loadingDiv.style.display = 'none';
-                mp3Btn.disabled = false;
-                mp4Btn.disabled = false;
-            }
-        }
-        
-        async function downloadMP3() {
-            const url = document.getElementById('youtubeUrl').value.trim();
-            
-            if (!url) {
-                showStatus('❌ 请输入 YouTube 链接', 'error');
+            if (!youtubeUrl) {
+                showError('请输入YouTube视频链接');
                 return;
             }
-            
-            showStatus('⏳ 正在转换为 MP3...', 'info');
-            setLoading(true);
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/convert/mp3`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url })
-                });
-                
-                if (!response.ok) {
-                    let errorMsg = '转换失败';
-                    try {
-                        const error = await response.json();
-                        errorMsg = error.error || errorMsg;
-                    } catch (e) {
-                        errorMsg = `HTTP ${response.status}`;
-                    }
-                    throw new Error(errorMsg);
-                }
-                
-                const blob = await response.blob();
-                const downloadUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = 'audio.mp3';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(downloadUrl);
-                
-                showStatus('✅ MP3 下载成功！', 'success');
-                document.getElementById('youtubeUrl').value = '';
-            } catch (error) {
-                showStatus('❌ ' + error.message, 'error');
-            } finally {
-                setLoading(false);
-            }
-        }
-        
-        async function downloadMP4() {
-            const url = document.getElementById('youtubeUrl').value.trim();
-            
-            if (!url) {
-                showStatus('❌ 请输入 YouTube 链接', 'error');
+
+            if (!isValidYouTubeUrl(youtubeUrl)) {
+                showError('请输入有效的YouTube链接');
                 return;
             }
-            
-            showStatus('⏳ 正在转换为 MP4...', 'info');
-            setLoading(true);
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/convert/mp4`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url })
-                });
-                
-                if (!response.ok) {
-                    let errorMsg = '转换失败';
-                    try {
-                        const error = await response.json();
-                        errorMsg = error.error || errorMsg;
-                    } catch (e) {
-                        errorMsg = `HTTP ${response.status}`;
-                    }
-                    throw new Error(errorMsg);
+
+            // 显示加载中，隐藏表单和错误信息
+            convertBtn.disabled = true;
+            converterForm.style.display = 'none';
+            loadingSection.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            // 发送请求到后端
+            fetch(`${API_URL}/api/convert/link`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    url: youtubeUrl,
+                    format: format
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // 显示成功结果
+                    showResult();
+                } else {
+                    showError(data.error || data.message || '转换失败');
                 }
-                
-                const blob = await response.blob();
-                const downloadUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = 'video.mp4';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(downloadUrl);
-                
-                showStatus('✅ MP4 下载成功！', 'success');
-                document.getElementById('youtubeUrl').value = '';
-            } catch (error) {
-                showStatus('❌ ' + error.message, 'error');
-            } finally {
-                setLoading(false);
-            }
+            })
+            .catch(error => {
+                showError('网络错误，请检查您的连接: ' + error.message);
+            });
         }
-        
-        // Enter 键提交
-        document.getElementById('youtubeUrl').addEventListener('keypress', (e) => {
+
+        function isValidYouTubeUrl(url) {
+            const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+            return youtubeRegex.test(url);
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('error-message');
+            const converterForm = document.getElementById('converter-form');
+            const loadingSection = document.getElementById('loading-section');
+            const convertBtn = document.getElementById('convert-btn');
+
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            loadingSection.style.display = 'none';
+            converterForm.style.display = 'block';
+            convertBtn.disabled = false;
+        }
+
+        function showResult() {
+            const loadingSection = document.getElementById('loading-section');
+            const resultSection = document.getElementById('result-section');
+
+            loadingSection.style.display = 'none';
+            resultSection.style.display = 'block';
+        }
+
+        function resetForm() {
+            const resultSection = document.getElementById('result-section');
+            const converterForm = document.getElementById('converter-form');
+            const errorMessage = document.getElementById('error-message');
+            const urlInput = document.getElementById('youtube-url');
+            const convertBtn = document.getElementById('convert-btn');
+
+            resultSection.style.display = 'none';
+            converterForm.style.display = 'block';
+            errorMessage.style.display = 'none';
+            urlInput.value = '';
+            convertBtn.disabled = false;
+        }
+
+        // 允许按Enter键提交
+        document.getElementById('youtube-url').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                downloadMP3();
+                convertVideo();
             }
         });
     </script>
