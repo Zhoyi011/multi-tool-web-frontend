@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MP4 转 MP3 - 在线视频转音频转换工具</title>
+    <title>MP4 转 MP3 - 多功能文件转换工具</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -388,14 +388,14 @@
         <main id="main-content">
             <!-- 上传区域 -->
             <div id="dropzone-section">
-                <div class="dropzone" id="dropzone" data-testid="dropzone-upload">
+                <div class="dropzone" id="dropzone">
                     <svg class="dropzone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                     </svg>
                     <h2>拖放文件到这里</h2>
                     <p>或者点击选择文件</p>
-                    <input type="file" id="file-input" accept="video/mp4,.mp4" data-testid="input-file">
-                    <button onclick="document.getElementById('file-input').click()" data-testid="button-select-file">选择MP4文件</button>
+                    <input type="file" id="file-input" accept="video/mp4,.mp4">
+                    <button onclick="document.getElementById('file-input').click()">选择MP4文件</button>
                     <div class="dropzone-footer">
                         <p>仅支持MP4格式</p>
                         <p>最大文件大小: 100MB</p>
@@ -405,13 +405,13 @@
 
             <!-- 处理中 -->
             <div id="processing-section" class="hidden">
-                <div class="card" data-testid="card-processing">
+                <div class="card">
                     <div class="card-header">
                         <div style="flex: 1;">
                             <div class="card-title" id="filename-display"></div>
                             <div class="card-description" id="filesize-display"></div>
                         </div>
-                        <div class="badge loading" data-testid="badge-status">
+                        <div class="badge loading">
                             <div class="spinner"></div>
                             <span id="status-text">上传中...</span>
                         </div>
@@ -422,7 +422,7 @@
                             <span class="monospace" id="progress-value">0%</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill" style="width: 0%;" data-testid="progress-conversion"></div>
+                            <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
                         </div>
                     </div>
                     <div class="status-message">
@@ -436,13 +436,13 @@
 
             <!-- 完成 -->
             <div id="completed-section" class="hidden">
-                <div class="card" data-testid="card-completed">
+                <div class="card">
                     <div class="card-header">
                         <div style="flex: 1;">
                             <div class="card-title" id="completed-filename-display"></div>
                             <div class="card-description" id="completed-filesize-display"></div>
                         </div>
-                        <div class="badge success" data-testid="badge-status">
+                        <div class="badge success">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -459,26 +459,26 @@
                         </div>
                     </div>
                     <div class="button-group">
-                        <button onclick="downloadFile()" data-testid="button-download">
+                        <button onclick="downloadFile()">
                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem; vertical-align: middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
                             下载MP3
                         </button>
-                        <button class="button-secondary" onclick="resetForm()" data-testid="button-convert-another">转换另一个</button>
+                        <button class="button-secondary" onclick="resetForm()">转换另一个</button>
                     </div>
                 </div>
             </div>
 
             <!-- 错误 -->
             <div id="error-section" class="hidden">
-                <div class="card" data-testid="card-error" style="border-color: var(--destructive);">
+                <div class="card" style="border-color: var(--destructive);">
                     <div class="card-header">
                         <div style="flex: 1;">
                             <div class="card-title" id="error-filename-display"></div>
                             <div class="card-description" id="error-filesize-display"></div>
                         </div>
-                        <div class="badge error" data-testid="badge-status">
+                        <div class="badge error">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l-2-2m0 0l-2 2m2-2l2 2m-2-2l-2-2"></path>
                             </svg>
@@ -486,7 +486,7 @@
                         </div>
                     </div>
                     <div class="error-box" id="error-message"></div>
-                    <button onclick="resetForm()" style="width: 100%;" class="button-secondary" data-testid="button-try-again">重试</button>
+                    <button onclick="resetForm()" style="width: 100%;" class="button-secondary">重试</button>
                 </div>
             </div>
         </main>
@@ -501,14 +501,13 @@
     </div>
 
     <script>
-        // 修改为您的实际API地址
-        const API_URL = 'http://localhost:10000';
+        // 使用你的实际后端地址
+        const API_URL = 'https://multi-tool-web-backend.onrender.com';
         let currentFile = null;
         let isProcessing = false;
-        let xhrRequest = null;
 
         function goBack() {
-            window.location.href = '../index.html';
+            window.location.href = '/';
         }
 
         const dropzone = document.getElementById('dropzone');
@@ -600,59 +599,47 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            xhrRequest = new XMLHttpRequest();
+            // 模拟进度（因为后端目前是模拟的）
+            simulateProgress();
 
-            xhrRequest.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable) {
-                    const uploadProgress = Math.round((e.loaded / e.total) * 50);
-                    updateProgress(uploadProgress);
-                }
-            });
-
-            xhrRequest.upload.addEventListener('loadend', () => {
-                document.getElementById('progress-label').textContent = '转换进度';
-                document.getElementById('status-text').textContent = '转换中...';
-                document.getElementById('status-message-text').textContent = '正在将视频转换为音频，请稍候...';
-                updateProgress(60);
-            });
-
-            xhrRequest.addEventListener('load', () => {
-                if (xhrRequest.status === 200) {
-                    try {
-                        const data = JSON.parse(xhrRequest.responseText);
-                        
-                        document.getElementById('completed-filename-display').textContent = file.name;
-                        document.getElementById('completed-filesize-display').textContent = formatFileSize(file.size);
-                        
-                        // 生成输出文件名
-                        const originalName = file.name;
-                        const outputName = originalName.replace(/\.mp4$/i, '.mp3');
-                        document.getElementById('output-filename').textContent = outputName;
-                        
-                        updateProgress(100);
-                        setTimeout(() => {
-                            showSection('completed-section');
-                            isProcessing = false;
-                        }, 500);
-                    } catch (error) {
-                        showError('解析响应失败: ' + error.message);
-                    }
+            // 发送请求到后端
+            fetch(`${API_URL}/api/convert/mp4-to-mp3`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // 显示成功结果
+                    document.getElementById('completed-filename-display').textContent = file.name;
+                    document.getElementById('completed-filesize-display').textContent = formatFileSize(file.size);
+                    
+                    // 生成输出文件名
+                    const originalName = file.name;
+                    const outputName = originalName.replace(/\.mp4$/i, '.mp3');
+                    document.getElementById('output-filename').textContent = outputName;
+                    
+                    showSection('completed-section');
+                    isProcessing = false;
                 } else {
-                    try {
-                        const errorData = JSON.parse(xhrRequest.responseText);
-                        showError(errorData.error || errorData.message || '转换失败');
-                    } catch {
-                        showError(`服务器错误 (${xhrRequest.status})`);
-                    }
+                    showError(data.error || data.message || '转换失败');
                 }
+            })
+            .catch(error => {
+                showError('网络错误，请检查您的连接: ' + error.message);
             });
+        }
 
-            xhrRequest.addEventListener('error', () => {
-                showError('网络错误，请检查您的连接');
-            });
-
-            xhrRequest.open('POST', `${API_URL}/api/convert/mp4-to-mp3`);
-            xhrRequest.send(formData);
+        function simulateProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                updateProgress(progress);
+                
+                if (progress >= 90) {
+                    clearInterval(interval);
+                }
+            }, 200);
         }
 
         function updateProgress(progress) {
@@ -669,17 +656,17 @@
         }
 
         function downloadFile() {
-            // 由于后端目前是模拟的，这里创建一个虚拟下载
             if (!currentFile) return;
 
             const originalName = currentFile.name;
             const outputName = originalName.replace(/\.mp4$/i, '.mp3');
             
+            // 模拟下载（因为后端转换功能尚未完全实现）
             alert('下载功能：由于后端转换功能尚未完全实现，这是一个模拟下载。\n文件名: ' + outputName);
             
             // 在实际实现中，这里应该调用后端下载API
             // const a = document.createElement('a');
-            // a.href = `${API_URL}/api/download/${currentTaskId}`;
+            // a.href = `${API_URL}/api/download/${taskId}`;
             // a.download = outputName;
             // document.body.appendChild(a);
             // a.click();
@@ -687,9 +674,6 @@
         }
 
         function resetForm() {
-            if (xhrRequest && xhrRequest.readyState !== XMLHttpRequest.DONE) {
-                xhrRequest.abort();
-            }
             isProcessing = false;
             currentFile = null;
             document.getElementById('progress-fill').style.width = '0%';
