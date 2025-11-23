@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 转 MP3 - 在线视频转音频转换工具</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #ffffff;
+            --foreground: #1a1a1a;
+            --border: #e5e5e5;
+            --card: #fafafa;
+            --primary: #2563eb;
+            --primary-foreground: #ffffff;
+            --muted: #f5f5f5;
+            --muted-foreground: #666666;
+            --destructive: #ef4444;
+            --destructive-foreground: #ffffff;
+            --accent: #f0f4ff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 42rem;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            width: 100%;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: var(--primary-foreground);
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            transition: background 0.3s;
+            margin-bottom: 2rem;
+        }
+
+        .back-button:hover {
+            background: #1d4ed8;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--muted-foreground);
+        }
+
+        main {
+            margin-bottom: 4rem;
+        }
+
+        .dropzone {
+            border: 2px dashed var(--border);
+            border-radius: 0.5rem;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--background);
+        }
+
+        .dropzone:hover {
+            border-color: var(--primary);
+            background-color: var(--accent);
+        }
+
+        .dropzone.drag-active {
+            border-color: var(--primary);
+            background-color: var(--accent);
+        }
+
+        .dropzone-icon {
+            width: 4rem;
+            height: 4rem;
+            margin-bottom: 1rem;
+            color: var(--muted-foreground);
+        }
+
+        .dropzone h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropzone p {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            padding: 0.625rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-height: 2.25rem;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .button-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--foreground);
+        }
+
+        .button-secondary:hover {
+            background-color: var(--muted);
+        }
+
+        .dropzone-footer {
+            margin-top: 1.5rem;
+        }
+
+        .dropzone-footer p {
+            font-size: 0.75rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: var(--muted-foreground);
+            margin-bottom: 0.25rem;
+        }
+
+        .card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--muted);
+            color: var(--foreground);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge.loading {
+            background-color: var(--muted);
+        }
+
+        .badge svg {
+            width: 0.875rem;
+            height: 0.875rem;
+            margin-right: 0.25rem;
+        }
+
+        .progress-container {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 0.5rem;
+            background-color: var(--muted);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background-color: var(--accent);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-info-icon {
+            width: 2rem;
+            height: 2rem;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .file-info-text p {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-info-text .text-secondary {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+        }
+
+        .status-message {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            margin-bottom: 1rem;
+        }
+
+        .status-message svg {
+            width: 1rem;
+            height: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .error-box {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--muted);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="goBack()">
+            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            返回主页
+        </button>
+
+        <header>
+            <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h1>MP4 转 MP3</h1>
+            <p class="subtitle">将您的MP4视频文件转换为MP3音频文件</p>
+        </header>
+
+        <main id="main-content">
+            <!-- 上传区域 -->
+            <div id="dropzone-section">
+                <div class="dropzone" id="dropzone" data-testid="dropzone-upload">
+                    <svg class="dropzone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <h2>拖放文件到这里</h2>
+                    <p>或者点击选择文件</p>
+                    <input type="file" id="file-input" accept="video/mp4,.mp4" data-testid="input-file">
+                    <button onclick="document.getElementById('file-input').click()" data-testid="button-select-file">选择MP4文件</button>
+                    <div class="dropzone-footer">
+                        <p>仅支持MP4格式</p>
+                        <p>最大文件大小: 100MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 处理中 -->
+            <div id="processing-section" class="hidden">
+                <div class="card" data-testid="card-processing">
+                    <div class="card-header">
+                        <div style="flex: 1;">
+                            <div class="card-title" id="filename-display"></div>
+                            <div class="card-description" id="filesize-display"></div>
+                        </div>
+                        <div class="badge loading" data-testid="badge-status">
+                            <div class="spinner"></div>
+                            <span id="status-text">上传中...</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span id="progress-label">上传进度</span>
+                            <span class="monospace" id="progress-value">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%;" data-testid="progress-conversion"></div>
+                        </div>
+                    </div>
+                    <div class="status-message">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="status-message-text">正在上传文件...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 完成 -->
+            <div id="completed-section" class="hidden">
+                <div class="card" data-testid="card-completed">
+                    <div class="card-header">
+                        <div style="flex: 1;">
+                            <div class="card-title" id="completed-filename-display"></div>
+                            <div class="card-description" id="completed-filesize-display"></div>
+                        </div>
+                        <div class="badge success" data-testid="badge-status">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>转换完成</span>
+                        </div>
+                    </div>
+                    <div class="file-info">
+                        <svg class="file-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H11a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <div class="file-info-text">
+                            <p id="output-filename"></p>
+                            <div class="text-secondary">MP3音频文件</div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button onclick="downloadFile()" data-testid="button-download">
+                            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem; vertical-align: middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            下载MP3
+                        </button>
+                        <button class="button-secondary" onclick="resetForm()" data-testid="button-convert-another">转换另一个</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 错误 -->
+            <div id="error-section" class="hidden">
+                <div class="card" data-testid="card-error" style="border-color: var(--destructive);">
+                    <div class="card-header">
+                        <div style="flex: 1;">
+                            <div class="card-title" id="error-filename-display"></div>
+                            <div class="card-description" id="error-filesize-display"></div>
+                        </div>
+                        <div class="badge error" data-testid="badge-status">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l-2-2m0 0l-2 2m2-2l2 2m-2-2l-2-2"></path>
+                            </svg>
+                            <span>转换失败</span>
+                        </div>
+                    </div>
+                    <div class="error-box" id="error-message"></div>
+                    <button onclick="resetForm()" style="width: 100%;" class="button-secondary" data-testid="button-try-again">重试</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-info">
+                <span>支持格式: MP4</span>
+                <span>输出格式: MP3</span>
+            </div>
+            <p class="footer-text">文件在转换后会自动清理，确保您的隐私安全</p>
+        </footer>
+    </div>
+
+    <script>
+        // 修改为您的实际API地址
+        const API_URL = 'http://localhost:10000';
+        let currentFile = null;
+        let isProcessing = false;
+        let xhrRequest = null;
+
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+
+        // 拖拽事件
+        dropzone.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('drag-active');
+        });
+
+        dropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('drag-active');
+        });
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('drag-active');
+            if (e.dataTransfer.files[0]) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // 文件选择
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function showSection(sectionId) {
+            document.getElementById('dropzone-section').classList.add('hidden');
+            document.getElementById('processing-section').classList.add('hidden');
+            document.getElementById('completed-section').classList.add('hidden');
+            document.getElementById('error-section').classList.add('hidden');
+            
+            if (sectionId) {
+                document.getElementById(sectionId).classList.remove('hidden');
+            }
+        }
+
+        function handleFile(file) {
+            if (isProcessing) return;
+
+            const maxSize = 100 * 1024 * 1024;
+            
+            if (!file.type.includes('video/mp4') && !file.name.toLowerCase().endsWith('.mp4')) {
+                alert('请上传MP4格式的视频文件');
+                return;
+            }
+
+            if (file.size > maxSize) {
+                alert('文件大小不能超过100MB');
+                return;
+            }
+
+            currentFile = file;
+            uploadAndConvert(file);
+        }
+
+        function uploadAndConvert(file) {
+            isProcessing = true;
+            
+            document.getElementById('filename-display').textContent = file.name;
+            document.getElementById('filesize-display').textContent = formatFileSize(file.size);
+            document.getElementById('progress-label').textContent = '上传进度';
+            document.getElementById('status-text').textContent = '上传中...';
+            document.getElementById('status-message-text').textContent = '正在上传文件...';
+            
+            showSection('processing-section');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            xhrRequest = new XMLHttpRequest();
+
+            xhrRequest.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const uploadProgress = Math.round((e.loaded / e.total) * 50);
+                    updateProgress(uploadProgress);
+                }
+            });
+
+            xhrRequest.upload.addEventListener('loadend', () => {
+                document.getElementById('progress-label').textContent = '转换进度';
+                document.getElementById('status-text').textContent = '转换中...';
+                document.getElementById('status-message-text').textContent = '正在将视频转换为音频，请稍候...';
+                updateProgress(60);
+            });
+
+            xhrRequest.addEventListener('load', () => {
+                if (xhrRequest.status === 200) {
+                    try {
+                        const data = JSON.parse(xhrRequest.responseText);
+                        
+                        document.getElementById('completed-filename-display').textContent = file.name;
+                        document.getElementById('completed-filesize-display').textContent = formatFileSize(file.size);
+                        
+                        // 生成输出文件名
+                        const originalName = file.name;
+                        const outputName = originalName.replace(/\.mp4$/i, '.mp3');
+                        document.getElementById('output-filename').textContent = outputName;
+                        
+                        updateProgress(100);
+                        setTimeout(() => {
+                            showSection('completed-section');
+                            isProcessing = false;
+                        }, 500);
+                    } catch (error) {
+                        showError('解析响应失败: ' + error.message);
+                    }
+                } else {
+                    try {
+                        const errorData = JSON.parse(xhrRequest.responseText);
+                        showError(errorData.error || errorData.message || '转换失败');
+                    } catch {
+                        showError(`服务器错误 (${xhrRequest.status})`);
+                    }
+                }
+            });
+
+            xhrRequest.addEventListener('error', () => {
+                showError('网络错误，请检查您的连接');
+            });
+
+            xhrRequest.open('POST', `${API_URL}/api/convert/mp4-to-mp3`);
+            xhrRequest.send(formData);
+        }
+
+        function updateProgress(progress) {
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('progress-value').textContent = progress + '%';
+        }
+
+        function showError(message) {
+            document.getElementById('error-filename-display').textContent = document.getElementById('filename-display').textContent;
+            document.getElementById('error-filesize-display').textContent = document.getElementById('filesize-display').textContent;
+            document.getElementById('error-message').textContent = message;
+            showSection('error-section');
+            isProcessing = false;
+        }
+
+        function downloadFile() {
+            // 由于后端目前是模拟的，这里创建一个虚拟下载
+            if (!currentFile) return;
+
+            const originalName = currentFile.name;
+            const outputName = originalName.replace(/\.mp4$/i, '.mp3');
+            
+            alert('下载功能：由于后端转换功能尚未完全实现，这是一个模拟下载。\n文件名: ' + outputName);
+            
+            // 在实际实现中，这里应该调用后端下载API
+            // const a = document.createElement('a');
+            // a.href = `${API_URL}/api/download/${currentTaskId}`;
+            // a.download = outputName;
+            // document.body.appendChild(a);
+            // a.click();
+            // document.body.removeChild(a);
+        }
+
+        function resetForm() {
+            if (xhrRequest && xhrRequest.readyState !== XMLHttpRequest.DONE) {
+                xhrRequest.abort();
+            }
+            isProcessing = false;
+            currentFile = null;
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-value').textContent = '0%';
+            fileInput.value = '';
+            showSection('dropzone-section');
+        }
+    </script>
+</body>
+</html>

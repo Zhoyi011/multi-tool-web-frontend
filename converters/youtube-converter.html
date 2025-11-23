@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 转换器 - 多功能转换工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #4285f4;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            transition: background 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .back-button:hover {
+            background: #3367d6;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-mp3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-mp3:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-mp4 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .btn-mp4:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+        
+        #status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+            display: block;
+        }
+        
+        #status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+            display: block;
+        }
+        
+        #status.error {
+            background: #ffebee;
+            color: #d32f2f;
+            border-left: 4px solid #d32f2f;
+            display: block;
+        }
+        
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="goBack()">
+            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            返回主页
+        </button>
+        
+        <h1>🎵 YouTube 转换器</h1>
+        <p class="subtitle">将 YouTube 视频转换为 MP3 或 MP4 格式</p>
+        
+        <div class="form-group">
+            <label for="youtubeUrl">YouTube 视频链接：</label>
+            <input 
+                type="url" 
+                id="youtubeUrl" 
+                placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
+                required
+            >
+        </div>
+        
+        <div class="button-group">
+            <button class="btn-mp3" onclick="downloadMP3()" id="mp3Btn">🎵 下载 MP3</button>
+            <button class="btn-mp4" onclick="downloadMP4()" id="mp4Btn">🎬 下载 MP4</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>正在转换，请稍候...</p>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div class="info-box">
+            <strong>📝 提示：</strong><br>
+            • 支持 youtube.com, youtu.be 等所有 YouTube 链接<br>
+            • MP3 转换质量为 192kbps<br>
+            • 转换时间取决于视频长度<br>
+            • ⚠️ 仅用于下载您拥有权限的内容
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://781db0af-089c-4d70-8a31-806cd5f562a9-00-3jbsebvx65mx3.riker.replit.dev';
+        
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = type;
+        }
+        
+        function setLoading(isLoading) {
+            const loadingDiv = document.getElementById('loading');
+            const mp3Btn = document.getElementById('mp3Btn');
+            const mp4Btn = document.getElementById('mp4Btn');
+            
+            if (isLoading) {
+                loadingDiv.style.display = 'block';
+                mp3Btn.disabled = true;
+                mp4Btn.disabled = true;
+            } else {
+                loadingDiv.style.display = 'none';
+                mp3Btn.disabled = false;
+                mp4Btn.disabled = false;
+            }
+        }
+        
+        async function downloadMP3() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            
+            if (!url) {
+                showStatus('❌ 请输入 YouTube 链接', 'error');
+                return;
+            }
+            
+            showStatus('⏳ 正在转换为 MP3...', 'info');
+            setLoading(true);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/convert/mp3`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+                
+                if (!response.ok) {
+                    let errorMsg = '转换失败';
+                    try {
+                        const error = await response.json();
+                        errorMsg = error.error || errorMsg;
+                    } catch (e) {
+                        errorMsg = `HTTP ${response.status}`;
+                    }
+                    throw new Error(errorMsg);
+                }
+                
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = 'audio.mp3';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                showStatus('✅ MP3 下载成功！', 'success');
+                document.getElementById('youtubeUrl').value = '';
+            } catch (error) {
+                showStatus('❌ ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        async function downloadMP4() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            
+            if (!url) {
+                showStatus('❌ 请输入 YouTube 链接', 'error');
+                return;
+            }
+            
+            showStatus('⏳ 正在转换为 MP4...', 'info');
+            setLoading(true);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/convert/mp4`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+                
+                if (!response.ok) {
+                    let errorMsg = '转换失败';
+                    try {
+                        const error = await response.json();
+                        errorMsg = error.error || errorMsg;
+                    } catch (e) {
+                        errorMsg = `HTTP ${response.status}`;
+                    }
+                    throw new Error(errorMsg);
+                }
+                
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = 'video.mp4';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                showStatus('✅ MP4 下载成功！', 'success');
+                document.getElementById('youtubeUrl').value = '';
+            } catch (error) {
+                showStatus('❌ ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        // Enter 键提交
+        document.getElementById('youtubeUrl').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                downloadMP3();
+            }
+        });
+    </script>
+</body>
+</html>

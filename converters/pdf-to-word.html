@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="description" content="Convert PDF files to Word documents with our fast and reliable API. Simple integration, high-quality conversions.">
+    <meta property="og:title" content="PDF to Word Conversion API">
+    <meta property="og:description" content="Convert PDF files to Word documents with our fast and reliable API.">
+    <meta property="og:type" content="website">
+    <title>PDF to Word Conversion API - Fast & Reliable Document Conversion</title>
+    <style>
+        :root {
+            --button-outline: rgba(0,0,0, .10);
+            --badge-outline: rgba(0,0,0, .05);
+            --opaque-button-border-intensity: -8;
+            --elevate-1: rgba(0,0,0, .03);
+            --elevate-2: rgba(0,0,0, .08);
+            --background: 0 0% 100%;
+            --foreground: 0 0% 9%;
+            --border: 0 0% 89%;
+            --card: 0 0% 98%;
+            --card-foreground: 0 0% 9%;
+            --card-border: 0 0% 94%;
+            --primary: 221 83% 53%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 0 0% 90%;
+            --secondary-foreground: 0 0% 9%;
+            --muted: 0 0% 92%;
+            --muted-foreground: 0 0% 40%;
+            --accent: 220 14% 91%;
+            --accent-foreground: 0 0% 9%;
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 0 0% 98%;
+            --input: 0 0% 78%;
+            --ring: 221 83% 53%;
+        }
+
+        .dark {
+            --button-outline: rgba(255,255,255, .10);
+            --badge-outline: rgba(255,255,255, .05);
+            --opaque-button-border-intensity: 9;
+            --elevate-1: rgba(255,255,255, .04);
+            --elevate-2: rgba(255,255,255, .09);
+            --background: 0 0% 7%;
+            --foreground: 0 0% 98%;
+            --border: 0 0% 16%;
+            --card: 0 0% 9%;
+            --card-foreground: 0 0% 98%;
+            --card-border: 0 0% 12%;
+            --primary: 221 83% 53%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 0 0% 18%;
+            --secondary-foreground: 0 0% 98%;
+            --muted: 0 0% 16%;
+            --muted-foreground: 0 0% 64%;
+            --accent: 220 14% 17%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62% 30%;
+            --destructive-foreground: 0 0% 98%;
+            --input: 0 0% 28%;
+            --ring: 221 83% 53%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border-color: hsl(var(--border));
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            border-bottom: 1px solid hsl(var(--border));
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            background-color: hsl(var(--background));
+            z-index: 10;
+        }
+
+        header .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.375rem;
+            background-color: hsl(var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: hsl(var(--primary-foreground));
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .header-title p {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.375rem 0.75rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            background-color: hsl(var(--card));
+            color: hsl(var(--foreground));
+        }
+
+        .badge-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: rgb(34 197 94);
+        }
+
+        button {
+            padding: 0.5625rem 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2.25rem;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+
+        .btn-secondary {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+            border: 1px solid hsl(var(--border));
+        }
+
+        .btn-secondary:hover {
+            background-color: hsl(var(--secondary) / 0.8);
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: hsl(var(--foreground));
+            border-color: transparent;
+        }
+
+        .btn-ghost:hover {
+            background-color: hsl(var(--muted));
+        }
+
+        .btn-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            padding: 0;
+        }
+
+        main {
+            padding: 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background-color: hsl(var(--background));
+        }
+
+        .hero h2 {
+            font-size: clamp(1.875rem, 5vw, 3.125rem);
+            font-weight: bold;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 42rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+            gap: 2rem;
+            max-width: 48rem;
+            margin: 0 auto;
+            padding-top: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            space: 0.75rem;
+        }
+
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: hsl(var(--primary) / 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: hsl(var(--primary));
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .section {
+            padding: 4rem 1rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .section-title p {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .upload-zone {
+            max-width: 48rem;
+            margin: 0 auto;
+            border: 2px dashed hsl(var(--border));
+            border-radius: 0.5rem;
+            padding: 2rem;
+            min-height: 16rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: hsl(var(--card));
+            text-align: center;
+        }
+
+        .upload-zone:hover {
+            border-color: hsl(var(--primary));
+            background-color: hsl(var(--primary) / 0.05);
+        }
+
+        .upload-zone.dragging {
+            border-color: hsl(var(--primary));
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background-color: hsl(var(--primary) / 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: hsl(var(--primary));
+            font-size: 2rem;
+        }
+
+        .upload-zone h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-zone p {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1rem;
+        }
+
+        .upload-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 20rem;
+            height: 0.5rem;
+            background-color: hsl(var(--muted));
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: hsl(var(--primary));
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .status-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .status-icon.success {
+            background-color: rgb(220, 252, 231);
+            color: rgb(34, 197, 94);
+        }
+
+        .status-icon.error {
+            background-color: rgb(254, 226, 226);
+            color: rgb(239, 68, 68);
+        }
+
+        .status-icon.loading {
+            background-color: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--card-border));
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .code-block {
+            background-color: hsl(var(--muted));
+            padding: 1rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            margin-right: 0.5rem;
+        }
+
+        .method-badge.post {
+            background-color: rgb(34, 197, 94);
+        }
+
+        .method-badge.get {
+            background-color: rgb(59, 130, 246);
+        }
+
+        .api-endpoint {
+            font-family: "JetBrains Mono", monospace;
+            background-color: hsl(var(--muted));
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        th {
+            font-weight: 600;
+            background-color: hsl(var(--muted));
+        }
+
+        .docs-container {
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            color: hsl(var(--primary));
+            border-bottom-color: hsl(var(--primary));
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .footer {
+            border-top: 1px solid hsl(var(--border));
+            padding: 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            text-align: center;
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: hsl(var(--foreground));
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .text-success {
+            color: rgb(34, 197, 94);
+        }
+
+        .text-error {
+            color: rgb(239, 68, 68);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .feature-highlight {
+            background-color: hsl(var(--primary) / 0.05);
+            border: 1px solid hsl(var(--primary) / 0.2);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: hsl(var(--foreground));
+        }
+
+        @media (max-width: 640px) {
+            .hero h2 {
+                font-size: 1.875rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            .upload-zone {
+                padding: 1.5rem;
+                min-height: 12rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="content">
+                <div class="header-left">
+                    <div class="logo">📄</div>
+                    <div class="header-title">
+                        <h1>PDF to Word API</h1>
+                        <p>文档转换服务</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="badge" style="display: none;" id="statusBadge">
+                        <span class="badge-dot"></span>
+                        API 运行中
+                    </div>
+                    <button class="btn-ghost btn-icon theme-toggle" onclick="toggleTheme()" title="切换主题">🌙</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>PDF 转 Word 转换 API</h2>
+                <p>快速、可靠的文档转换服务。保留格式，安全处理。</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="document.getElementById('demoSection').scrollIntoView({behavior: 'smooth'})">立即试用</button>
+                    <button class="btn-secondary" onclick="document.getElementById('docsSection').scrollIntoView({behavior: 'smooth'})">查看文档</button>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>快速转换</h3>
+                        <p>平均处理时间少于10秒</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📄</div>
+                        <h3>保留格式</h3>
+                        <p>精确保留原始文档格式</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>安全可靠</h3>
+                        <p>文件加密传输和处理</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="demoSection">
+            <div class="container">
+                <div class="section-title">
+                    <h2>在线演示</h2>
+                    <p>立即体验PDF转Word功能</p>
+                </div>
+
+                <div class="upload-zone" id="uploadZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon" id="uploadIcon">📤</div>
+                    <h3 id="uploadTitle">上传PDF文件</h3>
+                    <p id="uploadSubtitle">拖拽文件到此处或点击选择文件</p>
+                    <div class="upload-info">
+                        <span>支持格式: PDF</span>
+                        <span style="margin: 0 0.5rem;">•</span>
+                        <span>最大: 50MB</span>
+                    </div>
+                    <div id="progressContainer" class="hidden">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text"><span id="progressText">0</span>%</div>
+                    </div>
+                </div>
+
+                <input type="file" id="fileInput" accept=".pdf,application/pdf" onchange="handleFileSelect(event)">
+
+                <div id="successContainer" class="hidden" style="text-align: center; margin-top: 2rem;">
+                    <div class="status-icon success">✓</div>
+                    <h3 class="text-success">转换成功！</h3>
+                    <p id="convertedFilename" style="color: hsl(var(--muted-foreground)); margin: 1rem 0;"></p>
+                    <button class="btn-primary" id="downloadBtn" style="margin-right: 1rem;">下载Word文件</button>
+                    <button class="btn-secondary" onclick="location.reload()">转换另一个文件</button>
+                </div>
+
+                <div id="errorContainer" class="hidden" style="text-align: center; margin-top: 2rem;">
+                    <div class="status-icon error">✕</div>
+                    <h3 class="text-error">转换失败</h3>
+                    <p id="errorMessage" style="color: hsl(var(--muted-foreground)); margin: 1rem 0;"></p>
+                    <button class="btn-primary" onclick="location.reload()">重试</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="docsSection">
+            <div class="container docs-container">
+                <div class="section-title">
+                    <h2>API 文档</h2>
+                    <p>简单、快速、可靠的PDF转Word转换API。轻松集成到您的应用中。</p>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab(event, 'endpoints')">API端点</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'examples')">示例代码</button>
+                </div>
+
+                <div id="endpoints" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <div style="margin-bottom: 0.5rem;">
+                                <span class="method-badge post">POST</span>
+                                <span class="api-endpoint">/api/convert</span>
+                            </div>
+                            <h3 class="card-title">转换PDF到Word</h3>
+                            <p class="card-description">上传PDF文件并将其转换为Word文档</p>
+                        </div>
+                        <div>
+                            <h4 style="font-weight: 600; margin-bottom: 1rem;">请求参数</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>参数名</th>
+                                        <th>类型</th>
+                                        <th>说明</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.875rem;">file</td>
+                                        <td><span class="badge">File</span></td>
+                                        <td>PDF文件（必填）</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <h4 style="font-weight: 600; margin: 1.5rem 0 1rem;">响应示例</h4>
+                            <div class="code-block">{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "originalFilename": "document.pdf",
+  "convertedFilename": "document.docx",
+  "downloadUrl": "/api/download/550e8400...",
+  "message": "转换成功"
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div style="margin-bottom: 0.5rem;">
+                                <span class="method-badge get">GET</span>
+                                <span class="api-endpoint">/api/download/:id</span>
+                            </div>
+                            <h3 class="card-title">下载转换后的文件</h3>
+                            <p class="card-description">通过转换ID下载Word文件</p>
+                        </div>
+                        <div>
+                            <h4 style="font-weight: 600; margin-bottom: 1rem;">URL参数</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>参数名</th>
+                                        <th>类型</th>
+                                        <th>说明</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.875rem;">id</td>
+                                        <td><span class="badge">String</span></td>
+                                        <td>转换任务ID</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="examples" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">💻 JavaScript 示例</h3>
+                            <p class="card-description">使用 Fetch API 上传和转换PDF文件</p>
+                        </div>
+                        <div class="code-block">const formData = new FormData();
+formData.append('file', pdfFile);
+
+const response = await fetch('/api/convert', {
+  method: 'POST',
+  body: formData
+});
+
+const result = await response.json();
+
+// 下载转换后的文件
+window.location.href = result.downloadUrl;</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🔧 cURL 示例</h3>
+                            <p class="card-description">使用命令行工具测试API</p>
+                        </div>
+                        <div class="code-block">curl -X POST http://your-api-url/api/convert \
+  -F "file=@document.pdf" \
+  -o response.json</div>
+                    </div>
+                </div>
+
+                <div class="feature-highlight">
+                    <h3 style="margin-bottom: 1rem;">✓ 功能特性</h3>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <h4>高质量转换</h4>
+                            <p>保留原始PDF的格式、字体和布局</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>快速处理</h4>
+                            <p>平均转换时间少于10秒</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>文件大小</h4>
+                            <p>支持最大50MB的PDF文件</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>© 2024 PDF to Word API. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">文档</a>
+                    <a href="#">支持</a>
+                    <a href="#">状态</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = '';
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeButton();
+        }
+
+        function updateThemeButton() {
+            const btn = document.querySelector('.theme-toggle');
+            const isDark = document.documentElement.classList.contains('dark');
+            btn.textContent = isDark ? '☀️' : '🌙';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const isDark = saved === 'dark' || (saved === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            }
+            updateThemeButton();
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('uploadZone').classList.add('dragging');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            document.getElementById('uploadZone').classList.remove('dragging');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('uploadZone').classList.remove('dragging');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect({ target: { files } });
+            }
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            const file = files[0];
+            if (file.type !== 'application/pdf') {
+                showError('只支持PDF文件');
+                return;
+            }
+
+            if (file.size > 50 * 1024 * 1024) {
+                showError('文件大小不能超过50MB');
+                return;
+            }
+
+            uploadAndConvert(file);
+        }
+
+        async function uploadAndConvert(file) {
+            resetUI();
+            showProgress();
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${API_URL}/api/convert`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '转换失败');
+                }
+
+                const result = await response.json();
+                showSuccess(result);
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || '转换失败，请重试');
+            }
+        }
+
+        function showProgress() {
+            document.getElementById('uploadTitle').textContent = '转换中...';
+            document.getElementById('uploadSubtitle').style.display = 'none';
+            document.getElementById('progressContainer').classList.remove('hidden');
+            document.querySelector('.upload-info').style.display = 'none';
+            document.getElementById('uploadIcon').classList.add('status-icon', 'loading');
+            document.getElementById('uploadIcon').textContent = '⏳';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 90) progress = 90;
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressText').textContent = Math.floor(progress);
+                if (progress >= 90) clearInterval(interval);
+            }, 300);
+        }
+
+        function showSuccess(result) {
+            document.getElementById('uploadZone').classList.add('hidden');
+            document.getElementById('successContainer').classList.remove('hidden');
+            document.getElementById('convertedFilename').textContent = result.convertedFilename;
+
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.onclick = () => {
+                window.location.href = `${API_URL}${result.downloadUrl}`;
+            };
+        }
+
+        function showError(message) {
+            document.getElementById('uploadZone').classList.add('hidden');
+            document.getElementById('errorContainer').classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function resetUI() {
+            document.getElementById('uploadZone').classList.remove('hidden');
+            document.getElementById('successContainer').classList.add('hidden');
+            document.getElementById('errorContainer').classList.add('hidden');
+            document.getElementById('uploadIcon').classList.remove('status-icon', 'loading');
+            document.getElementById('uploadIcon').textContent = '📤';
+            document.getElementById('uploadTitle').textContent = '上传PDF文件';
+            document.getElementById('uploadSubtitle').style.display = 'block';
+            document.querySelector('.upload-info').style.display = 'flex';
+            document.getElementById('progressContainer').classList.add('hidden');
+        }
+
+        function switchTab(e, tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            e.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        initTheme();
+    </script>
+</body>
+</html>
