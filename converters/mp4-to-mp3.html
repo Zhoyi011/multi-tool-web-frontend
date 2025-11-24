@@ -365,6 +365,15 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
+        .checking-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -413,12 +422,12 @@
                         </div>
                         <div class="badge loading">
                             <div class="spinner"></div>
-                            <span id="status-text">上传中...</span>
+                            <span id="status-text">转换中...</span>
                         </div>
                     </div>
                     <div class="progress-container">
                         <div class="progress-label">
-                            <span id="progress-label">上传进度</span>
+                            <span id="progress-label">转换进度</span>
                             <span class="monospace" id="progress-value">0%</span>
                         </div>
                         <div class="progress-bar">
@@ -429,7 +438,11 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <span id="status-message-text">正在上传文件...</span>
+                        <span id="status-message-text">正在转换文件，请稍候...</span>
+                    </div>
+                    <div class="checking-status" id="checking-status">
+                        <div class="spinner" style="width: 0.875rem; height: 0.875rem;"></div>
+                        <span>检查转换状态...</span>
                     </div>
                 </div>
             </div>
@@ -459,7 +472,7 @@
                         </div>
                     </div>
                     <div class="button-group">
-                        <button onclick="downloadFile()">
+                        <button onclick="downloadFile()" id="download-btn">
                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem; vertical-align: middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
@@ -503,8 +516,9 @@
     <script>
         // 使用你的实际后端地址
         const API_URL = 'https://multi-tool-web-backend.onrender.com';
-        let currentFile = null;
+        let currentTaskId = null;
         let isProcessing = false;
+        let statusCheckInterval = null;
 
         function goBack() {
             window.location.href = '/';
@@ -581,25 +595,25 @@
                 return;
             }
 
-            currentFile = file;
             uploadAndConvert(file);
         }
 
         function uploadAndConvert(file) {
             isProcessing = true;
+            currentTaskId = null;
             
             document.getElementById('filename-display').textContent = file.name;
             document.getElementById('filesize-display').textContent = formatFileSize(file.size);
-            document.getElementById('progress-label').textContent = '上传进度';
-            document.getElementById('status-text').textContent = '上传中...';
-            document.getElementById('status-message-text').textContent = '正在上传文件...';
+            document.getElementById('progress-label').textContent = '转换进度';
+            document.getElementById('status-text').textContent = '转换中...';
+            document.getElementById('status-message-text').textContent = '正在转换文件，请稍候...';
             
             showSection('processing-section');
 
             const formData = new FormData();
             formData.append('file', file);
 
-            // 模拟进度（因为后端目前是模拟的）
+            // 模拟进度
             simulateProgress();
 
             // 发送请求到后端
@@ -610,19 +624,11 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // 显示成功结果
-                    document.getElementById('completed-filename-display').textContent = file.name;
-                    document.getElementById('completed-filesize-display').textContent = formatFileSize(file.size);
-                    
-                    // 生成输出文件名
-                    const originalName = file.name;
-                    const outputName = originalName.replace(/\.mp4$/i, '.mp3');
-                    document.getElementById('output-filename').textContent = outputName;
-                    
-                    showSection('completed-section');
-                    isProcessing = false;
+                    currentTaskId = data.task_id;
+                    // 开始检查转换状态
+                    startStatusChecking();
                 } else {
-                    showError(data.error || data.message || '转换失败');
+                    showError(data.error || '转换失败');
                 }
             })
             .catch(error => {
@@ -630,16 +636,51 @@
             });
         }
 
+        function startStatusChecking() {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
+            
+            statusCheckInterval = setInterval(() => {
+                if (!currentTaskId) return;
+                
+                fetch(`${API_URL}/api/task/${currentTaskId}`)
+                    .then(response => response.json())
+                    .then(task => {
+                        if (task.status === 'completed') {
+                            clearInterval(statusCheckInterval);
+                            // 显示成功结果
+                            document.getElementById('completed-filename-display').textContent = document.getElementById('filename-display').textContent;
+                            document.getElementById('completed-filesize-display').textContent = document.getElementById('filesize-display').textContent;
+                            document.getElementById('output-filename').textContent = task.output_filename;
+                            
+                            updateProgress(100);
+                            setTimeout(() => {
+                                showSection('completed-section');
+                                isProcessing = false;
+                            }, 500);
+                            
+                        } else if (task.status === 'error') {
+                            clearInterval(statusCheckInterval);
+                            showError(task.error || '转换失败');
+                        }
+                        // 如果还是 processing 状态，继续等待
+                    })
+                    .catch(error => {
+                        console.error('检查状态失败:', error);
+                    });
+            }, 2000); // 每2秒检查一次
+        }
+
         function simulateProgress() {
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 5;
-                updateProgress(progress);
-                
+                progress += 2;
                 if (progress >= 90) {
                     clearInterval(interval);
                 }
-            }, 200);
+                updateProgress(progress);
+            }, 500);
         }
 
         function updateProgress(progress) {
@@ -648,6 +689,10 @@
         }
 
         function showError(message) {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
+            
             document.getElementById('error-filename-display').textContent = document.getElementById('filename-display').textContent;
             document.getElementById('error-filesize-display').textContent = document.getElementById('filesize-display').textContent;
             document.getElementById('error-message').textContent = message;
@@ -656,26 +701,38 @@
         }
 
         function downloadFile() {
-            if (!currentFile) return;
-
-            const originalName = currentFile.name;
-            const outputName = originalName.replace(/\.mp4$/i, '.mp3');
+            if (!currentTaskId) {
+                alert('请先完成文件转换');
+                return;
+            }
             
-            // 模拟下载（因为后端转换功能尚未完全实现）
-            alert('下载功能：由于后端转换功能尚未完全实现，这是一个模拟下载。\n文件名: ' + outputName);
+            // 显示加载状态
+            const downloadBtn = document.getElementById('download-btn');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<div class="spinner" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></div>下载中...';
+            downloadBtn.disabled = true;
             
-            // 在实际实现中，这里应该调用后端下载API
-            // const a = document.createElement('a');
-            // a.href = `${API_URL}/api/download/${taskId}`;
-            // a.download = outputName;
-            // document.body.appendChild(a);
-            // a.click();
-            // document.body.removeChild(a);
+            // 真实下载
+            const a = document.createElement('a');
+            a.href = `${API_URL}/api/download/${currentTaskId}`;
+            a.download = document.getElementById('output-filename').textContent;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // 恢复按钮状态
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+            }, 2000);
         }
 
         function resetForm() {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
             isProcessing = false;
-            currentFile = null;
+            currentTaskId = null;
             document.getElementById('progress-fill').style.width = '0%';
             document.getElementById('progress-value').textContent = '0%';
             fileInput.value = '';
