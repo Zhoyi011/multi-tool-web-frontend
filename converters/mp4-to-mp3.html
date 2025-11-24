@@ -515,7 +515,8 @@
 
     <script>
         // 使用你的实际后端地址
-        const API_URL = 'https://multi-tool-web-backend.onrender.com';
+        // Vercel会自动替换 process.env.API_URL
+        const API_URL = process.env.API_URL;
         let currentTaskId = null;
         let isProcessing = false;
         let statusCheckInterval = null;
